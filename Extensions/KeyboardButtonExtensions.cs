@@ -36,7 +36,28 @@ public static class KeyboardButtonExtensions
             new List<KeyboardButton>()
             {
                 new KeyboardButton("Davomat qilish📝"),
-                new KeyboardButton("Log out🚪")
+                new KeyboardButton("Sozlamalar⚙️"),
+            },
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("Log out🚪") 
+            }
+        };
+
+        return MakeDefaultReplyKeyboardMarkup(buttons);
+    }
+
+    public static ReplyKeyboardMarkup MakeSettingsControllerIndexButtonsReplyKeyboardMarkup(this ControllerContext context)
+    {
+        var buttons = new List<List<KeyboardButton>>()
+        {
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("Parolni o'zgartirish")
+            },
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("Ortga") 
             }
         };
 
@@ -204,15 +225,17 @@ public static class KeyboardButtonExtensions
     // }
     public static InlineKeyboardMarkup MakeStudentsInlineKeyboardMarkup(this ControllerContext context, List<Student> students)
     {
-        // Student obyektlaridan InlineKeyboardButton larini yaratish
         var buttons = students.Select(s =>
                 new InlineKeyboardButton(s.FirstName + " " + s.LastName)
                 {
                     CallbackData = s.Id.ToString(),
                 })
-            .ToList();
-
-        // Tugmachalarni ikki qator ustun shaklida yaratish
+             .ToList();
+       buttons.Add(new InlineKeyboardButton("Ortga")
+       {
+           CallbackData ="Ortga",
+       });
+        
         var inlineKeyboard = new List<List<InlineKeyboardButton>>();
         for (int i = 0; i < buttons.Count; i += 2)
         {

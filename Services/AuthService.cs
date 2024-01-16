@@ -1,6 +1,7 @@
 using AttendanceControlBot.Domain.Dtos.AuthDto;
 using AttendanceControlBot.Domain.Dtos.AuthDtos;
 using AttendanceControlBot.Domain.Entity;
+using AttendanceControlBot.Domain.Exceptions;
 using AttendanceControlBot.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
@@ -60,28 +61,26 @@ public class AuthService
                 && item.PhoneNumber == user.Login);
 
          if (userInfo is null)
-             throw new Exception("User not found");
-        
-        if (userInfo is Worker)
-        {
-            userInfo.Signed = true;
-            userInfo.LastLoginDate = DateTime.Now;
-           
-            if (userInfo.TelegramChatId==0)
-                userInfo.TelegramChatId = user.TelegramChatId;
+             throw new UserException("Foydalanuvchi topilmadi");
 
-            await _workerRepository.UpdateAsync(userInfo);
-            return userInfo;
-        }
+         if (userInfo is not Worker)
+         {
+             userInfo.Signed = true;
+             userInfo.LastLoginDate = DateTime.Now;
+         }
 
-        return null;
+         if (userInfo.TelegramChatId==0)
+            userInfo.TelegramChatId = user.TelegramChatId;
+
+        await _workerRepository.UpdateAsync(userInfo);
+        return userInfo;
     }
 
     public async Task Logout(long userId)
     {
         var user = await _workerRepository.GetByIdAsync(userId);
         if (user is null)
-            throw new Exception("User not found");
+            throw new UserException("Foydalanuvchi topilmadi");
 
         user.Signed = false;
         await _workerRepository.UpdateAsync(user);

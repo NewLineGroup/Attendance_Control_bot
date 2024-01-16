@@ -1,4 +1,5 @@
 using AttendanceControlBot.Configuration;
+using AttendanceControlBot.Domain.Exceptions;
 using AttendanceControlBot.Extensions;
 using AttendanceControlBot.Infrastructure;
 using AttendanceControlBot.Infrastructure.Repositories;
@@ -31,6 +32,8 @@ public class TelegramBotService
     private AdminService _adminService;
     private StudentService _studentService;
     private SessionManager SessionManager;
+    private WorkerService WorkerService;
+    private SettingsService SettingsService;
 
     public TelegramBotService()
     {
@@ -48,9 +51,11 @@ public class TelegramBotService
         _studentService = new StudentService(_studentRepository);
         _parentService = new ParentService(_parentRepository, _studentRepository);
         SessionManager = new SessionManager(_workerRepository);
+        WorkerService = new WorkerService(_workerRepository);
+        SettingsService = new SettingsService(WorkerService);
         ControllerManager =
             new ControllerManager.ControllerManager(_authService, SessionManager, repository: _workerRepository,
-                _studentRepository, _adminService,_studentService,_parentService,_lessonRepository);
+                _studentRepository, _adminService,_studentService,_parentService,_lessonRepository,SettingsService);
     }
 
 
@@ -171,7 +176,12 @@ public class TelegramBotService
                     // + "\nStack trace: " + e.StackTrace
                 );
             Console.WriteLine(errorMessage + "\nStackTrace: " + e.StackTrace);
-            await context.SendErrorMessage(errorMessage, 500);
+            if (e.GetType() == typeof(UserException))
+            {
+              await  context.SendBoldTextMessage(e.Message);
+            }
+            else
+             await context.SendErrorMessage(errorMessage, 500);
         }
     }
 

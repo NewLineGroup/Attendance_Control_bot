@@ -4,6 +4,7 @@ using AttendanceControlBot.Domain.SessionModels;
 using AttendanceControlBot.Extensions;
 using AttendanceControlBot.Services;
 using AttendanceControlBot.TelegramBot.Context;
+using Telegram.Bot.Types.Enums;
 
 namespace AttendanceControlBot.TelegramBot.Controllers;
 
@@ -171,8 +172,19 @@ public class AuthController : ControllerBase
         return;
     }
 
-    protected override Task HandleUpdate(ControllerContext context)
+    protected override async Task HandleUpdate(ControllerContext context)
     {
-        return Task.CompletedTask;
+        if (message!.Type == MessageType.Text)
+        {
+            var text = message.Text;
+            if (text is not null)
+                switch (text)
+                {
+                    case "/start":
+                        context.Session.Controller = nameof(HomeController);
+                        context.Session.Action = nameof(HomeController.Index);
+                        break;
+                }
+        }
     }
 }

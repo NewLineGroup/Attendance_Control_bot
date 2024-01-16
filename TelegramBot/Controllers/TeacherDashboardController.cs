@@ -1,4 +1,5 @@
 using AttendanceControlBot.Domain.Entity;
+using AttendanceControlBot.Domain.Exceptions;
 using AttendanceControlBot.Extensions;
 using AttendanceControlBot.Infrastructure.Repositories;
 using AttendanceControlBot.Services;
@@ -69,7 +70,6 @@ public class TeacherDashboardController : ControllerBase
     
     protected override async Task HandleUpdate(ControllerContext context)
     {
-
         if (context.Message?.Type is MessageType.Text)
         {
             string text = context.Message?.Text;
@@ -89,6 +89,10 @@ public class TeacherDashboardController : ControllerBase
                     break;
                 case "Darsga kechikib kirganligi  xabari⚠️":
                     context.Session.Action = nameof(GetStudentNameToMessageAboutBeingLateToClass);
+                    break;
+                case "Sozlamalar⚙️":
+                    context.Session.Controller = nameof(SettingsController);
+                    context.Session.Action = nameof(SettingsController.Index);
                     break;
                 case "Ortga":
                     context.Session.Controller = nameof(TeacherDashboardController);
@@ -140,7 +144,7 @@ public class TeacherDashboardController : ControllerBase
 
     }
 
-  //   await GetStudentName(context); shuni joylash kere
+ 
  
     public async Task HandleStudentNamesCallBackQueryToAttendance(ControllerContext context)
     {
@@ -148,7 +152,13 @@ public class TeacherDashboardController : ControllerBase
 
         if (!long.TryParse(query.Data, out long studentId))
         {
-            throw new Exception("Bunday o'quvchi mavjud emas");
+            if (query.Data == "Ortga")
+            {
+                context.Session.Action = nameof(ToAttend);
+                return;
+            }
+            else
+                throw new UserException("Bunday o'quvchi mavjud emas");
         }
 
         var student = await _studentService.GetByIdAsync(studentId);
@@ -164,8 +174,13 @@ public class TeacherDashboardController : ControllerBase
         var query = context.Update.CallbackQuery;
 
         if (!long.TryParse(query.Data, out long studentId))
-        {
-            throw new Exception("Bunday o'quvchi mavjud emas");
+        { if (query.Data == "Ortga")
+            {
+                context.Session.Action = nameof(ToAttend);
+                return;
+            }
+            else
+                throw new UserException("Bunday o'quvchi mavjud emas");
         }
 
         var student = await _studentService.GetByIdAsync(studentId);
@@ -183,7 +198,6 @@ public class TeacherDashboardController : ControllerBase
         if (@class is not null)
         {
             context.Session.ClassNumber = @class;
-            Console.WriteLine("class number: "+@class);
             context.Session.Action = nameof(ToAttend);
         }
     }
@@ -261,16 +275,18 @@ public class TeacherDashboardController : ControllerBase
     public async Task MessageAboutNonAttendance(ControllerContext context)
     {
         await  SendAttendanceMessageToParent(context, context.Session.Student);
-        context.SendBoldTextMessage("Xabar yuborildi",context.MakeTeacherAttendanceSingleClassReplyKeyboardMarkup());
-        context.Session.Action = nameof(ToAttend);
+        var students =await _studentService.GetStudentsByClassNumber(context.Session.ClassNumber);
+        await context.SendBoldTextMessage("O'quvchini tanlang: ", replyMarkup: context.MakeStudentsInlineKeyboardMarkup(students));
+        // await context.SendBoldTextMessage("Xabar yuborildi");
+        context.Session.Action = nameof(HandleStudentNamesCallBackQueryToAttendance);
     } 
     
     public async Task MessageAboutBeingLateToClass (ControllerContext context)
     {
         await  SendMessageAboutBeingLateToClassToParent(context, context.Session.Student);
-        context.SendBoldTextMessage("Xabar yuborildi",context.MakeTeacherAttendanceSingleClassReplyKeyboardMarkup());
-        context.Session.Action = nameof(ToAttend);
-
+        var students =await _studentService.GetStudentsByClassNumber(context.Session.ClassNumber);
+        await context.SendBoldTextMessage("O'quvchini tanlang: ", replyMarkup: context.MakeStudentsInlineKeyboardMarkup(students));
+        context.Session.Action = nameof(HandleStudentNamesCallBackQueryToMessageAboutBeingLateToClass);
     } 
     
     public async Task HomeworkAssignment(ControllerContext context)

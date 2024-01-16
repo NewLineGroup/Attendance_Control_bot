@@ -9,7 +9,7 @@ namespace AttendanceControlBot.TelegramBot.ControllerManager;
 
 public class ControllerManager
 {
-    
+    private readonly SettingsController _settingsController;
     private readonly AuthController _authController;
     private readonly HomeController _homeController;
     private readonly AdminDashboardController _adminDashboardController;
@@ -30,9 +30,10 @@ public class ControllerManager
     private AdminService AdminService;
     private ParentService _parentService;
     private StudentService studentService;
+    private SettingsService SettingsService;
     
     public ControllerManager(AuthService authService,
-        SessionManager sessionManager, WorkerRepository repository,StudentRepository studentRepository, AdminService adminService, StudentService studentService, ParentService parentService, LessonRepository lessonRepository)
+        SessionManager sessionManager, WorkerRepository repository,StudentRepository studentRepository, AdminService adminService, StudentService studentService, ParentService parentService, LessonRepository lessonRepository, SettingsService settingsService)
     {
         
         _sessionManager = sessionManager;
@@ -42,6 +43,7 @@ public class ControllerManager
         this.studentService = studentService;
         _parentService = parentService;
         LessonRepository = lessonRepository;
+        SettingsService = settingsService;
         _parentsController = new ParentsController(this,_parentService);
         _aboutTheBotController = new AboutTheBotController(this);
         _teacherDashboardController = new TeacherDashboardController(this,workerRepository,authService,this.studentService,_parentService);
@@ -50,8 +52,8 @@ public class ControllerManager
         this._homeController = new HomeController(this);
         this._authController = new AuthController(authService, this);
         this._adminDashboardController = new AdminDashboardController(this, repository, authService,LessonRepository);
-        
-        _dataContext = new DataContext();
+        this._settingsController = new SettingsController(this,settingsService);
+        this._dataContext = new DataContext();
         //this._settingsController = new SettingsController(this,clientDataService, boardService);
         //_clientInfoController = new ClientInfoController(this,clientDataService,_clientService);
 
@@ -85,8 +87,9 @@ public class ControllerManager
                return this._parentsController;
             case nameof(AboutTheBotController):
                 return this._aboutTheBotController;
+            case nameof(SettingsController):
+                return this._settingsController;
         }
-        
         return this.DefaultController;
     }
 

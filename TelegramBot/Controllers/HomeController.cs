@@ -6,6 +6,9 @@ namespace AttendanceControlBot.TelegramBot.Controllers;
 
 public class HomeController : ControllerBase
 {
+    public HomeController(ControllerManager.ControllerManager controllerManager) : base(controllerManager)
+    {
+    }
     public async Task Index(ControllerContext context)
     {
         await context.SendBoldTextMessage(
@@ -65,7 +68,5 @@ public class HomeController : ControllerBase
     //     await context.Forward(this._controllerManager);
     // }
 
-    public HomeController(ControllerManager.ControllerManager controllerManager) : base(controllerManager)
-    {
-    }
+   
 }
