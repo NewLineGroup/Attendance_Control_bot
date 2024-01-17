@@ -14,12 +14,12 @@ public class DataContext : DbContext
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     }
-    //"host=213.230.65.55;port=5444;username=postgres;password=159357Dax;database=tcb_app"
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder
             .UseLazyLoadingProxies();
-        optionsBuilder.UseNpgsql("host=localhost;port=5432;username=postgres;password=3214;database=control_bot");
+        optionsBuilder.UseNpgsql("Host=213.230.65.55; Port=5444; Database=postgres; username=postgres; password=159357Dax;");
         base.OnConfiguring(optionsBuilder);
     }
 }
