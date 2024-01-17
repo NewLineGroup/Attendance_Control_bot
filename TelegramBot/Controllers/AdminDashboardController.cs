@@ -5,6 +5,7 @@ using AttendanceControlBot.Services;
 using AttendanceControlBot.TelegramBot.Context;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -15,15 +16,17 @@ public class AdminDashboardController : ControllerBase
 {
     private readonly WorkerRepository _repository;
     private readonly AuthService _authService;
+    private readonly ParentService _parentService;
     private readonly LessonRepository _lessonRepository;
 
     public AdminDashboardController(ControllerManager.ControllerManager controllerManager,
         WorkerRepository clientDataService, AuthService authService,
-        LessonRepository lessonRepository) : base(controllerManager)
+        LessonRepository lessonRepository, ParentService parentService) : base(controllerManager)
     {
         _repository = clientDataService;
         _authService = authService;
         _lessonRepository = lessonRepository;
+        _parentService = parentService;
     }
 
     public async Task Index(ControllerContext context)
@@ -68,6 +71,12 @@ public class AdminDashboardController : ControllerBase
             case nameof(ReadLessonSchedule):
                 await this.ReadLessonSchedule(context);
                 break;
+            case nameof(PostAnAdStart):
+                await this.PostAnAdStart(context);
+                break;
+            case nameof(SendPostToAllParents):
+                await this.SendPostToAllParents(context);
+                break;
         }
     }
 
@@ -96,6 +105,12 @@ public class AdminDashboardController : ControllerBase
                 case "Dars jadvalini kiritish":
                     context.Session.Action = nameof(ReadLessonScheduleStart);
                     break;
+                case"E'lon joylash📤":
+                    context.Session.Action = nameof(PostAnAdStart);
+                    break;
+                case"Ortga":
+                    context.Session.Action = nameof(Index);
+                    break;
             }
         }
 
@@ -107,10 +122,9 @@ public class AdminDashboardController : ControllerBase
 
     private async Task ReadLessonScheduleStart(ControllerContext context)
     {
-        await context.SendTextMessage("Dars jadvalini excel formatida yuboring");
+        await context.SendTextMessage("Dars jadvalini excel formatida yuboring",replyMarkup:context.Back());
         context.Session.Action = nameof(ReadLessonSchedule);
     }
-
     public async Task ReadLessonSchedule(ControllerContext context)
     {
         var fileId = context.Message.Document.FileId;
@@ -137,4 +151,39 @@ public class AdminDashboardController : ControllerBase
         }
     }
 
+    public async Task PostAnAdStart(ControllerContext context)
+    {
+        await context.SendBoldTextMessage(
+            "E'lonni yuboring\nEslatma: Siz joylagan e'lon botdan foydalanuvchi barcha ota-onalarga yuboriladi",replyMarkup:context.Back());
+        context.Session.Action = nameof(SendPostToAllParents);
+    }
+
+    public async Task SendPostToAllParents(ControllerContext context)
+    {
+        var parentsTelegramChatIds = _parentService.GetAllAsync().Result.Select(parent=>parent.TelegramChatId).Distinct().ToList();
+        
+        if (parentsTelegramChatIds is  null)
+        {
+            await context.SendBoldTextMessage("E'lon yuborish uchun ota-onalr mavjud emas");
+            return;
+        }
+        
+        string post = context.Message.Text;
+        if (post is null)
+        {
+          await context.SendBoldTextMessage("E'lon faqat marndan iborat bo'lishi kerak");
+          return;
+        }
+
+        foreach (long id in parentsTelegramChatIds)
+        {
+            Console.WriteLine(id);
+        }
+        foreach (long id in parentsTelegramChatIds)
+        {
+            if (_botClient != null) await _botClient.SendTextMessageAsync(id, post);
+        }
+        await context.SendBoldTextMessage("E'lon yuborildi",context.MakeAdminDashboardReplyKeyboardMarkup());
+        context.Session.Action = nameof(Index);
+    }
 }

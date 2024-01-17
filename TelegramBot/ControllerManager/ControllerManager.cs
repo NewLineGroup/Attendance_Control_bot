@@ -51,7 +51,7 @@ public class ControllerManager
         this.studentsDepartmentController = new StudentsDepartmentController(this,adminService);
         this._homeController = new HomeController(this);
         this._authController = new AuthController(authService, this);
-        this._adminDashboardController = new AdminDashboardController(this, repository, authService,LessonRepository);
+        this._adminDashboardController = new AdminDashboardController(this, repository, authService,LessonRepository,_parentService);
         this._settingsController = new SettingsController(this,settingsService);
         this._dataContext = new DataContext();
         //this._settingsController = new SettingsController(this,clientDataService, boardService);

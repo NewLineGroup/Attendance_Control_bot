@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AttendanceControlBot")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce983113f5aadf36ddb0bf62b7c26a506119190e")]
 [assembly: System.Reflection.AssemblyProductAttribute("AttendanceControlBot")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AttendanceControlBot")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
