@@ -1,5 +1,5 @@
 name: TTATF Server Deploy
-
+ 
 on:
   push:
     branches: master
