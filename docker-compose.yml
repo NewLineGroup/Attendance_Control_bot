@@ -1,5 +1,7 @@
-﻿services:
-  attendancecontrolbot:
+ version: "3.4"
+ 
+ services:
+  attendance-controller:
     container_name: attendance-controller
     image: attendance-controller
     build:
