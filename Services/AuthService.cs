@@ -63,7 +63,7 @@ public class AuthService
          if (userInfo is null)
              throw new UserException("Foydalanuvchi topilmadi");
 
-         if (userInfo is not Worker)
+         if (userInfo is  Worker)
          {
              userInfo.Signed = true;
              userInfo.LastLoginDate = DateTime.Now;
