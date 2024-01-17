@@ -1,0 +1,21 @@
+name: Frontend Deploy
+
+on:
+  push:
+    branches: master
+
+jobs:
+  deploy:
+    
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        working-directory: .
+        run: docker-compose build --no-cache
+      - name: Deploy
+        working-directory: .
+        run: |
+          docker-compose down
+          docker-compose up -d
