@@ -35,12 +35,6 @@ public class TeacherDashboardController : ControllerBase
             case nameof(LogOut):
                 await this.LogOut(context);
                 break;
-            case nameof(HomeworkAssignment):
-                await this.HomeworkAssignment(context);
-                break;
-            case nameof(UncompletedHomeworkMessage):
-                await this.UncompletedHomeworkMessage(context);
-                break;
             case nameof(ToAttend):
                 await this.ToAttend(context);
                 break;
@@ -77,12 +71,6 @@ public class TeacherDashboardController : ControllerBase
             {
                 case "Davomat qilish📝":
                     context.Session.Action = nameof(GetClassNumber);
-                    break;
-                case "Uyga vazifa berish📬":
-                    context.Session.Action = nameof(HomeworkAssignment);
-                    break;
-                case "Uyga vazifa bajarilmaganligi xabari⚠️":
-                    context.Session.Action = nameof(UncompletedHomeworkMessage);
                     break;
                 case "Darsga qatnashmaganlik xabari⛔️":
                     context.Session.Action = nameof(GetStudentNameToAttendance);
@@ -144,8 +132,6 @@ public class TeacherDashboardController : ControllerBase
 
     }
 
- 
- 
     public async Task HandleStudentNamesCallBackQueryToAttendance(ControllerContext context)
     {
         var query = context.Update.CallbackQuery;
@@ -255,23 +241,7 @@ public class TeacherDashboardController : ControllerBase
         }
     }
 
-    private async Task SendUncompletedHomeworkMessageToParent(ControllerContext context, Student student)
-    {
-        string studentFullName = student.FirstName + " " + student.LastName;
-        string message =
-            await GenerateMessageUncompletedHomework(studentFullName, context.Session.Teacher.Subject, context.Session.LessonTime);
-        var parent =await _parentService.GetParentByStudentId(student.Id);
-        if (parent is not null)
-         await context.SendTextMessageToParent(message,parent.TelegramChatId);
-    }
-
-    
-
-    public async Task UncompletedHomeworkMessage(ControllerContext context)
-    {
-        await context.SendTextMessage("Tanlang: ",
-            replyMarkup: context.MakeTeacherAttendanceSingleClassReplyKeyboardMarkup());
-    } 
+  
     public async Task MessageAboutNonAttendance(ControllerContext context)
     {
         await  SendAttendanceMessageToParent(context, context.Session.Student);
@@ -288,11 +258,7 @@ public class TeacherDashboardController : ControllerBase
         await context.SendBoldTextMessage("O'quvchini tanlang: ", replyMarkup: context.MakeStudentsInlineKeyboardMarkup(students));
         context.Session.Action = nameof(HandleStudentNamesCallBackQueryToMessageAboutBeingLateToClass);
     } 
-    
-    public async Task HomeworkAssignment(ControllerContext context)
-    {
-        
-    }
+ 
     
     public async Task ToAttend(ControllerContext context)
     {
@@ -322,13 +288,5 @@ public class TeacherDashboardController : ControllerBase
     {
         string message = $"O'quvchi {studentFullName} {lessonTime}-soatdagi {subject} darsining uyga vazifasini bajarmadi❌";
         return message;
-    }
-
-
-    public async Task<bool> CheckCallBackQueryTypeIsStudentName(string callBackData)
-    {
-        if (callBackData.Length > 3)
-            return true;
-        return false;
     }
 }

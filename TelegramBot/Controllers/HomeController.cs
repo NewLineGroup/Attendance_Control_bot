@@ -50,8 +50,11 @@ public class HomeController : ControllerBase
                           context.Session.Controller = nameof(ParentsController);
                           context.Session.Action = nameof(ParentsController.ParentsMenu);
                         }
-                        context.Session.Controller = nameof(ParentsController);
-                        context.Session.Action = nameof(ParentsController.Index);
+                        else
+                        {
+                            context.Session.Controller = nameof(ParentsController);
+                            context.Session.Action = nameof(ParentsController.Index);
+                        }
                         break;
                     case "Bot haqida":
                         context.Session.Controller = nameof(AboutTheBotController);
