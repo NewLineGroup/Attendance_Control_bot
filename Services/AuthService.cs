@@ -60,16 +60,18 @@ public class AuthService
                 item.Password == user.Password
                 && item.PhoneNumber == user.Login);
 
-         if (userInfo is null)
-             throw new UserException("Foydalanuvchi topilmadi");
+        if (userInfo is null)
+        {
+            throw new UserException("Foydalanuvchi topilmadi");
+        }
 
-         if (userInfo is  Worker)
-         {
+        if (userInfo is  Worker)
+        {
              userInfo.Signed = true;
              userInfo.LastLoginDate = DateTime.Now;
-         }
+        }
 
-         if (userInfo.TelegramChatId==0)
+        if (userInfo.TelegramChatId==0)
             userInfo.TelegramChatId = user.TelegramChatId;
 
         await _workerRepository.UpdateAsync(userInfo);
