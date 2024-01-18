@@ -103,13 +103,13 @@ public class ParentsController : ControllerBase
                 var res= _parentService.GetAllAsync().Result.FirstOrDefault(p => p.ChildId == student.Id);
                 if (res is not null)
                 {
-                    context.SendBoldTextMessage("Bu o'quvchi uchun ro'yxatdan o'tilgan");
+                    await context.SendBoldTextMessage("Bu o'quvchi uchun ro'yxatdan o'tilgan");
                     context.Session.Action = nameof(Index);
                     return;
                 }
 
                 context.Session.Student = student;
-                context.SendBoldTextMessage(
+                await context.SendBoldTextMessage(
                     $@"Farzandingiz {student.FirstName} {student.LastName} ekanligini tasdiqlaysizmi?",context.ConfirmationOfParentageReplayKeyboardMarkup());
                 context.Session.Action = nameof(WhenParentConfirmsStudent);
             }

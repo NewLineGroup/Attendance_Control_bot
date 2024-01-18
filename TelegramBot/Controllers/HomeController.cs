@@ -49,6 +49,7 @@ public class HomeController : ControllerBase
                         {
                           context.Session.Controller = nameof(ParentsController);
                           context.Session.Action = nameof(ParentsController.ParentsMenu);
+                          await context.SendBoldTextMessage("Xush kelibsiz", context.ParentMenuReplyKeyboardMarkup());
                         }
                         else
                         {
