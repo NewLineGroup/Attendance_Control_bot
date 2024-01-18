@@ -67,8 +67,7 @@ public class ParentsController : ControllerBase
                             .FirstOrDefault(p => p.TelegramChatId == context.Message.Chat.Id);
                         if (res is not null)
                         {
-                            res.IsStopped = true;
-                            _parentService.UpdateAsync(res);
+                           await _parentService.DeleteParentByTelegramChatId(res.TelegramChatId);
                         }
                         context.Session.Controller=nameof(HomeController);
                         context.Session.Action = nameof(HomeController.Index);
@@ -119,7 +118,7 @@ public class ParentsController : ControllerBase
         
     }
 
-    private async Task ParentsMenu(ControllerContext context)
+    public async Task ParentsMenu(ControllerContext context)
     {
         await context.SendBoldTextMessage("Farzandingiz uchun berilgan tasdiqlash Id sini kiriting:",context.ParentMenuReplyKeyboardMarkup());
     }
@@ -147,7 +146,7 @@ public class ParentsController : ControllerBase
     private async Task LogOutStart(ControllerContext context)
     {
         context.SendBoldTextMessage(@"Rostdan ham chiqishni istaysizi?
-Eslatma: Agar hisobingizdan chiqadigan bo'lsangiz bildirishnomalarni ola olmaysiz, ya'ni farzandingiz haqidagi xabarlarni ola olmaysiz",context.ParentConfirmTheLogOutReplayKeyboardMarkup());
+Eslatma: Agar hisobingizdan chiqadigan bo'lsangiz bildirishnomalarni ola olmaysiz",context.ParentConfirmTheLogOutReplayKeyboardMarkup());
     }
     
     protected async Task WhenParentConfirmsStudent(ControllerContext context)

@@ -90,7 +90,7 @@ public class AdminDashboardController : ControllerBase
                 case "Log out🚪":
                     context.Session.Action = nameof(LogOut);
                     break;
-                case "Settings⚙️":
+                case "Sozlamalar⚙️":
                     context.Session.Controller = nameof(SettingsController);
                     context.Session.Action = nameof(SettingsController.Index);
                     break;

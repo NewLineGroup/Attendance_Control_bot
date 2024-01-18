@@ -1,4 +1,6 @@
-﻿using AttendanceControlBot.Extensions;
+﻿using AttendanceControlBot.Domain.Entity;
+using AttendanceControlBot.Extensions;
+using AttendanceControlBot.Services;
 using AttendanceControlBot.TelegramBot.Context;
 using Telegram.Bot.Types.Enums;
 
@@ -6,8 +8,10 @@ namespace AttendanceControlBot.TelegramBot.Controllers;
 
 public class HomeController : ControllerBase
 {
-    public HomeController(ControllerManager.ControllerManager controllerManager) : base(controllerManager)
+    private ParentService _parentService;
+    public HomeController(ControllerManager.ControllerManager controllerManager, ParentService parentService) : base(controllerManager)
     {
+        _parentService = parentService;
     }
     public async Task Index(ControllerContext context)
     {
@@ -40,6 +44,12 @@ public class HomeController : ControllerBase
                         context.Session.Action = nameof(AuthController.LoginUserStart);
                         break;
                     case "Ota-ona sifatida tashrif buyurish":
+                        var res = await CheckParentTelegramChatId(context.Message.Chat.Id);
+                        if (res is not null)
+                        {
+                          context.Session.Controller = nameof(ParentsController);
+                          context.Session.Action = nameof(ParentsController.ParentsMenu);
+                        }
                         context.Session.Controller = nameof(ParentsController);
                         context.Session.Action = nameof(ParentsController.Index);
                         break;
@@ -49,24 +59,11 @@ public class HomeController : ControllerBase
                         break;
                 }
         }
-        // throw new NotImplementedException();
     }
 
-    // public async Task Login(UserControllerContext context)
-    // {
-    //     context.Session.Controller = nameof(AuthController);
-    //     context.Session.Action = nameof(AuthController.LoginUserStart);
-    //
-    //     await context.Forward(this._controllerManager);
-    // }
-    //
-    // public async Task Register(UserControllerContext context)
-    // {
-    //     context.Session.Controller = nameof(AuthController);
-    //     context.Session.Action = nameof(AuthController.RegistrationStart);
-    //
-    //     await context.Forward(this._controllerManager);
-    // }
-
-   
+    private async Task<Parent> CheckParentTelegramChatId(long id)
+    {
+        var parents=  await _parentService.GetAllAsync();
+        return parents.FirstOrDefault(parent => parent.TelegramChatId == id);
+    }
 }

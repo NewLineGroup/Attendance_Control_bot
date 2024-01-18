@@ -49,7 +49,7 @@ public class ControllerManager
         _teacherDashboardController = new TeacherDashboardController(this,workerRepository,authService,this.studentService,_parentService);
         this.teacherDepartmentController = new TeacherDepartmentController(this, adminService);
         this.studentsDepartmentController = new StudentsDepartmentController(this,adminService);
-        this._homeController = new HomeController(this);
+        this._homeController = new HomeController(this,_parentService);
         this._authController = new AuthController(authService, this);
         this._adminDashboardController = new AdminDashboardController(this, repository, authService,LessonRepository,_parentService);
         this._settingsController = new SettingsController(this,settingsService);

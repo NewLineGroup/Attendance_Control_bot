@@ -42,4 +42,12 @@ public class ParentService : BaseService<Parent>
         return childIds;
     }
 
+    public async Task DeleteParentByTelegramChatId(long telegramChatId)
+    {
+        foreach (Parent parent in _parentRepository.GetAll().ToList())
+        {
+            if (parent.TelegramChatId==telegramChatId)
+                await _parentRepository.RemoveAsync(parent);
+        }
+    }
 }
