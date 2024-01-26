@@ -178,6 +178,8 @@ public class TelegramBotService
             Console.WriteLine(errorMessage + "\nStackTrace: " + e.StackTrace);
             if (e.GetType() == typeof(UserException))
             {
+                context.Session.Controller = nameof(HomeController);
+                context.Session.Action = nameof(HomeController.Index);
               await  context.SendBoldTextMessage(e.Message);
             }
             else
