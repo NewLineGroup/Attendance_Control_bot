@@ -1,4 +1,5 @@
-﻿using AttendanceControlBot.Domain.Dtos.AuthDtos;
+﻿using System.Text.RegularExpressions;
+using AttendanceControlBot.Domain.Dtos.AuthDtos;
 using AttendanceControlBot.Domain.Enums;
 using AttendanceControlBot.Domain.SessionModels;
 using AttendanceControlBot.Extensions;
@@ -32,8 +33,16 @@ public class AuthController : ControllerBase
         var login = context.Message?.Contact?.PhoneNumber;
         if (login is null)
         {
-            await context.SendErrorMessage("Yaroqsiz telefon raqami!", 400);
-            return;
+            login = context.Message.Text;
+            string regexPattern = @"^\+\d{12}$";
+            Regex regex = new Regex(regexPattern);
+
+
+            if (!regex.IsMatch(login))
+            {
+                await context.SendErrorMessage("Yaroqsiz telefon raqami!", 400);
+                return;
+            }
         }
 
         if (!login.StartsWith("+"))
@@ -71,17 +80,17 @@ public class AuthController : ControllerBase
                     context.Session.Controller = nameof(AdminDashboardController);
                     context.Session.Action = nameof(AdminDashboardController.Index);
                     break;
-                // default:
-                //     context.Session.Controller = nameof(TeacherDepartmentController);
-                //     context.Session.Action = nameof(TeacherDepartmentController.Index);
-                //     break;
+                default:
+                    context.Session.Controller = nameof(HomeController);
+                    context.Session.Action = nameof(HomeController.Index);
+                    break;
             }
            
 
             await context.Forward(this._controllerManager);
             return;
         }
-            await context.SendBoldTextMessage("User not found❌");
+             await context.SendBoldTextMessage("User not found❌");
 
         context.Session.Controller = null;
         context.Session.Action = null;
