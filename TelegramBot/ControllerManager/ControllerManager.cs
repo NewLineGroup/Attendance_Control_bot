@@ -54,9 +54,7 @@ public class ControllerManager
         this._adminDashboardController = new AdminDashboardController(this, repository, authService,LessonRepository,_parentService);
         this._settingsController = new SettingsController(this,settingsService);
         this._dataContext = new DataContext();
-        //this._settingsController = new SettingsController(this,clientDataService, boardService);
-        //_clientInfoController = new ClientInfoController(this,clientDataService,_clientService);
-
+        
 
         // this._authController = new AuthController(botClient, new AuthService(dataService));
     }
