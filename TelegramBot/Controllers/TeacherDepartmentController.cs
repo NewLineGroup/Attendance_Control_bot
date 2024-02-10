@@ -101,7 +101,6 @@ public class TeacherDepartmentController : ControllerBase
         context.Session.Teacher.Password = context.Update.Message.Text;
         context.Session.Action = nameof(AddTeacherSubject);
         await context.SendBoldTextMessage("O'qituvchi dars beradigan fanni kiriting: \n Na'muna: Ona tili");
-
     }
     public async Task AddTeacherSubject(ControllerContext context)
     {

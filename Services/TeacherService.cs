@@ -9,8 +9,8 @@ public class TeacherService : BaseService<Worker>
     {
     }
 
-    public async Task<bool> SendMessageAbsenceFromLesson(Student student)
-    {
-        return true;
-    }
+    // public async Task<bool> SendMessageAbsenceFromLesson(Student student)
+    // {
+    //     return true;
+    // }
 }
