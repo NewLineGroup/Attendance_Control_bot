@@ -276,12 +276,16 @@ public class TeacherDashboardController : ControllerBase
 
     public async Task<string> GenerateMessageToAttendance(string studentFullName)
     {
-        string message = $"O'quvchi {studentFullName} ayni vaqtda darsga qatnashmayapti";
+        string message = @$"
+{DateTime.Now.Day}/{DateTime.Now.Month}/{DateTime.Now.Year} {DateTime.Now.Hour}:{DateTime.Now.Minute} 
+O'quvchi {studentFullName} ayni vaqtda darsga qatnashmayapti!";
         return message;
     }
     public async Task<string> GenerateMessageToMessageAboutBeingLateToClass(string studentFullName)
     {
-        string message = $"O'quvchi {studentFullName} ayni vaqtdagi darsga Kechikib kirdi";
+        string message = @$"
+{DateTime.Now.Day}/{DateTime.Now.Month}/{DateTime.Now.Year} {DateTime.Now.Hour}:{DateTime.Now.Minute}   
+O'quvchi {studentFullName} ayni vaqtdagi darsga kechga qolib kirdi!";
         return message;
     }
     public async Task<string> GenerateMessageUncompletedHomework(string studentFullName,string subject,byte lessonTime)

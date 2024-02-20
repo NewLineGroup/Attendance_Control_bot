@@ -194,12 +194,14 @@ public static class KeyboardButtonExtensions
     }
     
     
-
-    public static InlineKeyboardMarkup MakeGetAllClassNumbersInlineReplyMarkup(this ControllerContext context,List<string> buttonLabels)
+    public static InlineKeyboardMarkup MakeGetAllClassNumbersInlineReplyMarkup(this ControllerContext context, List<string> buttonLabels)
     {
+        var sortedLabels = buttonLabels.OrderBy(label => int.Parse(label.Substring(0, label.IndexOf("-")))) // Raqamlar bo'yicha tartiblash
+            .ThenBy(label => label.Substring(label.IndexOf("-") + 1)); // Harflar bo'yicha tartiblash
+
         var inlineKeyboard = new List<List<InlineKeyboardButton>>();
 
-        foreach (var label in buttonLabels)
+        foreach (var label in sortedLabels)
         {
             var button = InlineKeyboardButton.WithCallbackData(label);
             var row = new List<InlineKeyboardButton> { button };
@@ -208,6 +210,8 @@ public static class KeyboardButtonExtensions
 
         return new InlineKeyboardMarkup(inlineKeyboard);
     }
+
+
    
 
    
@@ -299,6 +303,10 @@ public static class KeyboardButtonExtensions
             {
                 new KeyboardButton("O'qituvchi qo'shish"),
                 new KeyboardButton("O'qituvchini o'chirish"),
+            },
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("O'qituvchilarni excel orqali qo'shish")
             },
             new List<KeyboardButton>()
             {

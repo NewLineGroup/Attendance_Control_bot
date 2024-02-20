@@ -159,7 +159,7 @@ Eslatma: Agar hisobingizdan chiqadigan bo'lsangiz bildirishnomalarni ola olmaysi
         }; 
         await _parentService.CreateAsync(parent); 
         await context.SendBoldTextMessage($@"Siz muvofaqqiyatli ro'yxatdan o'tdingiz✅
-Farzandingiz: {context.Session.Student.FirstName} {context.Session.Student.LastName}",replyMarkup: context.ParentMenuReplyKeyboardMarkup());
+O'quvchi: {context.Session.Student.FirstName} {context.Session.Student.LastName}",replyMarkup: context.ParentMenuReplyKeyboardMarkup());
         context.Session.Action = nameof(ParentsMenu);
         context.Session.Student = null;
     }

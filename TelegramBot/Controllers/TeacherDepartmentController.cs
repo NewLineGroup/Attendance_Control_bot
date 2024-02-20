@@ -3,6 +3,7 @@ using AttendanceControlBot.Domain.Entity;
 using AttendanceControlBot.Extensions;
 using AttendanceControlBot.Services;
 using AttendanceControlBot.TelegramBot.Context;
+using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
 namespace AttendanceControlBot.TelegramBot.Controllers;
@@ -44,6 +45,9 @@ public class TeacherDepartmentController : ControllerBase
             case nameof(DeleteTeacherFinish):
                 await this.DeleteTeacherFinish(context);
                 break;
+            case nameof(AddTeachers):
+                await this.AddTeachers(context);
+                break;
         }
     }
 
@@ -60,10 +64,36 @@ public class TeacherDepartmentController : ControllerBase
                 case "O'qituvchini o'chirish":
                     context.Session.Action = nameof(DeleteTeacherStart);
                     break;
+                case "O'qituvchilarni excel orqali qo'shish":
+                    context.Session.Action = nameof(AddTeachers);
+                    break;
                 case "Ortga":
                     context.Session.Controller = nameof(AdminDashboardController);
                     context.Session.Action = nameof(AdminDashboardController.Index);
                     break;
+            }
+        }
+        else if (context.Message.Document != null && context.Session.Action==nameof(AddTeachers))
+        {
+            var fileId = context.Message.Document.FileId;
+            //var fileName = context.Message.Document.FileName;
+
+            using (var fileStream = new MemoryStream())
+            {
+                var file = await _botClient.GetInfoAndDownloadFileAsync(fileId, fileStream);
+                fileStream.Position = 0;
+
+                var workers =await ExcelService.ReadWorkersFromExcel(fileStream);
+                if (workers is not null)
+                {
+                    var res = await _adminService._workerRepository.AddAllAsync(workers);
+                    await context.SendBoldTextMessage("Muvofaqqiyatli qo'shildi✅", context.TeachersDepartmentReplyKeyboardMarkup());
+                    context.Session.Action = nameof(TeacherDepartmentController.Index);
+                }
+                else
+                    await context.SendBoldTextMessage(@"Siz yuborgan excel file mos emas! 
+ Iltimos file bosh emasligi va ma'lumotlar berilgan na'muna kabi ekanligin tekshiring❌", 
+                        context.StudentsDepartmentReplyKeyboardMarkup());
             }
         }
     }
@@ -133,5 +163,10 @@ public class TeacherDepartmentController : ControllerBase
        else
         await context.SendBoldTextMessage("O'qituvchi topilmadi❌ \n Eslatma: O'qituvchi ism familiyasini kiritishga e'tiborli bo'ling",
             context.TeachersDepartmentReplyKeyboardMarkup());
+    }
+
+    public async Task AddTeachers(ControllerContext context)
+    {
+        await context.SendTextMessage("Excel fileni yuboring");
     }
 }

@@ -31,8 +31,38 @@ public static class ExcelService
 
         return Task.FromResult(students);
     }
+   
+    public static Task<List<Worker>> ReadWorkersFromExcel(Stream stream)
+    {
+        List<Worker> workers = new List<Worker>();
 
-   //Dars jadvalini exceldan yechib olsih uchun
+        using (var package = new ExcelPackage(stream))
+        {
+            var worksheet = package.Workbook.Worksheets[0];
+
+            int rowCount = worksheet.Dimension.Rows;
+
+            for (int row = 2; row <= rowCount; row++)
+            {
+                Worker worker = new Worker
+                {
+                    FullName = worksheet.Cells[row, 1].Value?.ToString() ?? "",
+                    PhoneNumber = worksheet.Cells[row, 2].Value?.ToString() ?? "",
+                    Password = worksheet.Cells[row, 3].Value?.ToString() ?? "",
+                    TelegramChatId = 0,
+                    Signed = false,
+                    LastLoginDate = DateTime.Now,
+                    Role = Role.Teacher,
+                    Subject = worksheet.Cells[row, 7].Value?.ToString()
+                };
+
+                workers.Add(worker);
+            }
+        }
+
+        return Task.FromResult(workers);
+    }
+    
    public static Task<List<Lesson>> ReadLessonSchedule(Stream stream)
     {
         List<Lesson> lessons = new List<Lesson>();

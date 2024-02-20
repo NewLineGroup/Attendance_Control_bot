@@ -8,7 +8,7 @@ namespace AttendanceControlBot.Services;
 
 public class AdminService
 {
-    private WorkerRepository _workerRepository;
+    public WorkerRepository _workerRepository;
     public StudentRepository _studentRepository;
    
 
