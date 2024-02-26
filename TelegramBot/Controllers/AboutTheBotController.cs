@@ -31,6 +31,5 @@ Yaratuvchi: @G_Abdurasulov";
 
     protected override async Task HandleUpdate(ControllerContext context)
     {
-        
     }
 }
