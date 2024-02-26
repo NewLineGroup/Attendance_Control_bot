@@ -19,7 +19,8 @@ public class DataContext : DbContext
     {
         optionsBuilder
             .UseLazyLoadingProxies();
-        optionsBuilder.UseNpgsql("Host=213.230.65.55; Port=5444; Database=postgres; username=postgres; password=159357Dax;");
+        optionsBuilder.UseNpgsql("Host=viaduct.proxy.rlwy.net; Port=50688; Database=railway; username=postgres; password=EgcA3526cBffD442geg*c4eC24a1bF5A;");
         base.OnConfiguring(optionsBuilder);
     }
+    //roundhouse.proxy.rlwy.net:43832
 }

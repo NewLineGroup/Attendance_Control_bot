@@ -86,6 +86,10 @@ public class TeacherDashboardController : ControllerBase
                     context.Session.Controller = nameof(TeacherDashboardController);
                     context.Session.Action = nameof(TeacherDashboardController.Index);
                     break;
+                case "Log out\ud83d\udeaa":
+                    context.Session.Controller = nameof(TeacherDashboardController);
+                    context.Session.Action = nameof(TeacherDashboardController.LogOut);
+                    break;
             }
         }
         if (context.Update.Type == UpdateType.CallbackQuery)
