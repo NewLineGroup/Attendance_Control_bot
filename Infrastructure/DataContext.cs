@@ -24,3 +24,4 @@ public class DataContext : DbContext
     }
     //roundhouse.proxy.rlwy.net:43832
 }
+//"Host=viaduct.proxy.rlwy.net; Port=50688; Database=railway; username=postgres; password=EgcA3526cBffD442geg*c4eC24a1bF5A;"
