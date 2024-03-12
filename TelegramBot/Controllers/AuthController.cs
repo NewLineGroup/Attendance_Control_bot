@@ -89,8 +89,8 @@ public class AuthController : ControllerBase
 
             await context.Forward(this._controllerManager);
             return;
-        }
-             await context.SendBoldTextMessage("User not found❌");
+        } 
+        await context.SendBoldTextMessage("Foydalanuvchi topilmadi❌");
 
         context.Session.Controller = null;
         context.Session.Action = null;

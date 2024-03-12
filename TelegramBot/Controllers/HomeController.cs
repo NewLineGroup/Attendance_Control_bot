@@ -8,7 +8,7 @@ namespace AttendanceControlBot.TelegramBot.Controllers;
 
 public class HomeController : ControllerBase
 {
-    private ParentService _parentService;
+    private readonly ParentService _parentService;
     public HomeController(ControllerManager.ControllerManager controllerManager, ParentService parentService) : base(controllerManager)
     {
         _parentService = parentService;

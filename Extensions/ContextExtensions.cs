@@ -63,6 +63,17 @@ public static class ContextExtensions
         };
         return await context.SendTextMessage($"<b><code>{codeText} {text ?? "Not found!"}</code></b>",chatId:5146085066, parseMode: ParseMode.Html);
     }
+    public static async Task<Message> SendErrorMessageToUser(this ControllerContext context,long chatId,string text = null, int code = 404)
+    {
+        string codeText = code switch
+        {
+            400 => "4️⃣0️⃣0️⃣",
+            401 => "4️⃣0️⃣1️⃣",
+            500 => "5️⃣0️⃣0️⃣",
+            _ => "4️⃣0️⃣4️⃣"
+        };
+        return await context.SendTextMessage($"<b><code>{codeText} {text ?? "Not found!"}</code></b>",chatId:chatId, parseMode: ParseMode.Html);
+    }
     
     public static async Task<Message> SendBoldTextMessage(this ControllerContext context, string text, IReplyMarkup? replyMarkup = null, ParseMode? parseMode = null)
     {
