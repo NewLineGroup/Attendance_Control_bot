@@ -28,20 +28,15 @@ public class ParentService : BaseService<Parent>
     }
 
   
-    public async Task<List<Student>> GetParentAllChildrens(long parentTelegramChatId)
+    public async Task<List<Student>> GetParentAllChildren(long parentTelegramChatId)
     {
         // Get the parent IDs based on the Telegram chat ID
-        var parentIds = _parentRepository
+        var parent = _parentRepository
             .GetAll()
-            .Where(parent => parent.TelegramChatId == parentTelegramChatId)
-            .Select(parent => parent.Id)
-            .ToList();
+            .Where(parent => parent.TelegramChatId == parentTelegramChatId).Select(parent=>parent.ChildId).ToList();
 
         // Get all students whose parent IDs match the retrieved parent IDs
-        var children = _studentRepository
-            .GetAll()
-            .Where(student => parentIds.Contains(student.ParentAuthId))
-            .ToList();
+        var children = _studentRepository.GetAll().Where(student => parent.Contains(student.Id)).ToList();
 
         return children;
     }

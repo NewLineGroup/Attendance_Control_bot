@@ -126,7 +126,7 @@ public class ParentsController : ControllerBase
     private async Task ViewAllMyChildes(ControllerContext context)
     {
         string textMessage = $"Farzandingiz: ";
-        var students =await _parentService.GetParentAllChildrens(context.Update.Message.Chat.Id);
+        var students =await _parentService.GetParentAllChildren(context.Update.Message.Chat.Id);
         Console.WriteLine(students.FirstOrDefault().FirstName);
         foreach (Student student in students)
         {
