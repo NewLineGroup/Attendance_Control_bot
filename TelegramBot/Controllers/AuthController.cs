@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using AttendanceControlBot.Domain.Dtos.AuthDtos;
 using AttendanceControlBot.Domain.Enums;
+using AttendanceControlBot.Domain.Exceptions;
 using AttendanceControlBot.Domain.SessionModels;
 using AttendanceControlBot.Extensions;
 using AttendanceControlBot.Services;
@@ -40,7 +41,9 @@ public class AuthController : ControllerBase
 
             if (!regex.IsMatch(login))
             {
-                await context.SendErrorMessage("Yaroqsiz telefon raqami!", 400);
+                throw new UserException("Yaroqsiz telefon raqami!");
+                await context.SendErrorMessageToUser(
+                     chatId:context.Session.ChatId,"Yaroqsiz telefon raqami!", 400);
                 return;
             }
         }
