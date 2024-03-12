@@ -166,23 +166,6 @@ public class TelegramBotService
             foreach (var updateHandler in this.updateHandlers)
                 await updateHandler(context, token);
         }
-        catch (UserException e)
-        {
-            string errorMessage = ("Handler Error: " + e.Message
-                    // + "\nStack trace: " + e.StackTrace
-                );
-            Console.WriteLine(errorMessage + "\nStackTrace: " + e.StackTrace);
-            if (e.GetType() == typeof(UserException))
-            {
-                context.Session.Controller = nameof(HomeController);
-                context.Session.Action = nameof(HomeController.Index);
-                await  context.SendBoldTextMessage(e.Message);
-            }
-            else
-                await context.SendErrorMessageToUser(chatId:context.Session.ChatId,errorMessage, 500);
-            
-            
-        }
         catch (Exception e)
         {
             //context.Reset();
@@ -197,7 +180,7 @@ public class TelegramBotService
             {
                 context.Session.Controller = nameof(HomeController);
                 context.Session.Action = nameof(HomeController.Index);
-              await  context.SendBoldTextMessage(e.Message);
+              await  context.SendErrorMessageToUser(chatId:context.Session.ChatId, e.Message);
             }
             else
              await context.SendErrorMessage(errorMessage, 500);
