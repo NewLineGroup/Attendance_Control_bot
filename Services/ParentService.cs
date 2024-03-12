@@ -27,19 +27,23 @@ public class ParentService : BaseService<Parent>
         return res;
     }
 
-    public async Task<List<Student>> GetParentAllChildes(long parentTelegramChatId)
+  
+    public async Task<List<Student>> GetParentAllChildrens(long parentTelegramChatId)
     {
-      var parentIds = _parentRepository
-                .GetAll()
-                .Where(parent => parent.TelegramChatId == parentTelegramChatId)
-                .Select(parent => parent.Id)
-                .ToList();
+        // Get the parent IDs based on the Telegram chat ID
+        var parentIds = _parentRepository
+            .GetAll()
+            .Where(parent => parent.TelegramChatId == parentTelegramChatId)
+            .Select(parent => parent.Id)
+            .ToList();
 
-            var childIds = _studentRepository
-                .GetAll()
-                .Where(student => parentIds.Contains(student.ParentAuthId))
-                .ToList();
-        return childIds;
+        // Get all students whose parent IDs match the retrieved parent IDs
+        var children = _studentRepository
+            .GetAll()
+            .Where(student => parentIds.Contains(student.ParentAuthId))
+            .ToList();
+
+        return children;
     }
 
     public async Task DeleteParentByTelegramChatId(long telegramChatId)
